@@ -1,4 +1,4 @@
-name = "moontv-plus"
+name = "xiaoyuer-tv"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 main = "./cloudflare-worker.ts"
@@ -10,7 +10,13 @@ minify = true
 directory = ".open-next/assets"
 binding = "ASSETS"
 
+# 自定义域名绑定（部署时自动把 www.775230.xyz 挂到本 Worker）
+[[routes]]
+pattern = "www.775230.xyz"
+custom_domain = true
+
 # D1 数据库绑定
+# 注意：database_id 使用占位符，cloudflare-deploy.yml 会用 D1_DATABASE_ID secret 替换
 [[d1_databases]]
 binding = "DB"
 database_name = "moontvplus"
@@ -35,6 +41,8 @@ crons = ["0 1 * * *"]
 # 注意：[vars] 必须留在文件最后。
 # cloudflare-deploy.yml 是用 `echo >> wrangler.toml` 追加环境变量的，
 # 追加的变量会落在文件末尾 —— 只有 [vars] 在最后它们才会进 [vars]。
+# 站点相关变量（站点名/账号/密码/订阅源等）通过 GitHub Secrets 注入，
+# 这里只保留基础三项，避免与 workflow 注入重复。
 [vars]
 NODE_ENV = "production"
 BUILD_TARGET = "cloudflare"
